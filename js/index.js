@@ -154,7 +154,6 @@ window.onload=function()
         Dots.array[i].radius=Dots.radiusArr[i];
       }
     }
-
   };
   //无限运动
   function infinateDot()
@@ -164,7 +163,6 @@ window.onload=function()
     drawDots();
     connect();
     requestAnimationFrame(infinateDot)
-
   }
   infinateDot();
 };

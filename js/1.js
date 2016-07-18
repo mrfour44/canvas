@@ -84,5 +84,77 @@ window.onload = function(){
   drawDots();
 
   //移动粒子
+  function moveDots(){
+    for(var i = 0;i<Dots.n;i++){
+      var dot = Dots.array[i];
+      //反弹判断
+      if(dot.x < 0 || dot.x > wW){
+        dot.vx =-dot.vx;
+      }
+      if(dot.y < 0 || dot.y > wH){
+        dot.vy =-dot.vy;
+      }
+      dot.x += dot.vx;
+      dot.y += dot.vy;
+    }
+  }
+  //混合颜色
+  //连线
+  function connect(){
+    function mixColor(dot1,dot2){
+      var color1 = dot1.color;
+      var color2 = dot2.color;
+      var r1 = dot1.radius;
+      var r2 = dot2.radius;
+      var r = Math.floor((color1.r*r1+color2.r*r2)/(r1+r2));
+      var g = Math.floor((color1.g*r1+color2.g*r2)/(r1+r2));
+      var b = Math.floor((color1.b*r1+color2.b*r2)/(r1+r2));
+      return "rgba(" + r + "," + g + "," + b + ",1)";
+    }
+    for(var i =0;i<Dots.n;i++){
+      for(var j =0;j<Dots.n;j++){
+        var dot1 = Dots.array[i];
+        var dot2 = Dots.array[j];
+        var color = mixColor(dot1,dot2);
+        if(Math.abs(dot1.x-dot2.x)<Dots.minDis && Math.abs(dot1.y-dot2.y)<Dots.minDis){
+          cvs.LineWidth = 0.2;
+          cvs.beginPath();
+          cvs.strokeStyle = color;
+          cvs.moveTo(dot1.x,dot1.y);
+          cvs.lineTo(dot2.x,dot2.y);
+          cvs.stroke();
+        }
+      }
+    }
+  }
 
+  //mousemove 事件
+  can.onmousemove=function(ev)
+  {
+    var ev=window.event || ev;
+    var pX=ev.pageX;
+    var pY=ev.pageY;
+    for(var i=0;i<Dots.n;i++)
+    {
+
+      if(Math.abs(Dots.array[i].x-pX)<Dots.d_mouse && Math.abs(Dots.array[i].y-pY)<Dots.d_mouse)
+      {
+        var r=Dots.radiusArr[i]*5;
+        Dots.array[i].radius=r;
+      }
+      else{
+        Dots.array[i].radius=Dots.radiusArr[i];
+      }
+    }
+  };
+
+  //无限运动
+  function infinateDot(){
+    cvs.clearRect(0,0,wW,wH);
+    moveDots();
+    drawDots();
+    connect();
+    requestAnimationFrame(infinateDot);
+  }
+  infinateDot();
 };
